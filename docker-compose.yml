@@ -1,0 +1,23 @@
+version: "3"
+
+networks:
+  monitor-net:
+    driver: bridge
+
+services:
+  erigon:
+    image: erigon
+    build: .
+    container_name: erigon
+    ports:
+      - "30303:30303/tcp"
+      - "30303:30303/udp"
+    restart: always
+    volumes:
+      - ./data:/data
+    command: /go/erigon/build/bin/erigon --snapshots=true --chain=mainnet --db.pagesize 4kb --datadir=/data/datadir --ethash.dagdir=/data/ethash --http --http.addr="0.0.0.0" --http.compression --http.vhosts="*" --http.corsdomain="*" --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --prune.r.before=11184524 --prune htc
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
